@@ -3,4 +3,3 @@
 target/
 tests/resources/*.html
 tests/resources/*.txt
-Cargo.lock
