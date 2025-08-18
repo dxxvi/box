@@ -47,3 +47,16 @@ pub fn encrypt(text: &str) -> Result<Vec<u8>, Box<dyn Error>> {
     writer.finish()?;
     Ok(encrypted_data)
 }
+
+#[derive(serde::Serialize, serde::Deserialize, Debug)]
+pub struct Dog {
+    pub name: String,
+    pub age: u8,
+}
+
+#[derive(serde::Serialize, serde::Deserialize, Debug)]
+pub struct Fish {
+    pub name: String,
+    pub heavy: Option<bool>,
+    pub dogs: Vec<Dog>,
+}

@@ -1,10 +1,10 @@
 pub mod utils;
 
-use chrono::Local;
 use colored::Colorize;
 use env_logger::{Builder, Env, Target};
 use log::Level;
 use std::io::Write;
+use time::OffsetDateTime;
 
 pub const PASSWORD: &str = "...";
 
@@ -18,7 +18,10 @@ pub fn init_logger() {
     let _ = Builder::from_env(env)
         .format(|buf, record| {
             // Get current timestamp
-            let timestamp = Local::now().format("%Y-%m-%d %H:%M:%S%.3f");
+            let timestamp = OffsetDateTime::now_local().unwrap();
+            let format =
+                time::format_description::parse("[year]-[month]-[day] [hour]:[minute]:[second].[subsecond digits:3]")
+                    .unwrap();
 
             // Apply colors to different parts of the log message using the colored crate
             let level = match record.level() {
@@ -33,7 +36,7 @@ pub fn init_logger() {
             let message = record.args().to_string().white();
 
             // Format the log message: timestamp [module] [level] message
-            writeln!(buf, "{} [{}] [{}] {}", timestamp, module, level, message)
+            writeln!(buf, "{} [{}] [{}] {}", timestamp.format(&format).unwrap(), module, level, message)
         })
         .target(Target::Stdout) // it logs to stderr by default
         .try_init();
