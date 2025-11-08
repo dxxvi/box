@@ -6,9 +6,9 @@
   <version>1</version>
   <properties>
     <commons-codec.version>1.17.0</commons-codec.version>
-    <java.version>24</java.version>
+    <java.version>25</java.version>
     <jsoup.version>1.21.1</jsoup.version>
-    <junit.version>5.13.2</junit.version>
+    <junit.version>5.14.0</junit.version>
     <logback.version>1.5.18</logback.version>
     <lz4.version>1.8.0</lz4.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
@@ -36,6 +36,16 @@
       <artifactId>junit-jupiter-api</artifactId>
       <version>${junit.version}</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.bytedeco</groupId>
+      <artifactId>javacv-platform</artifactId>
+      <version>1.5.12</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.zxing</groupId>
+      <artifactId>javase</artifactId>
+      <version>3.5.3</version>
     </dependency>
   </dependencies>
 
