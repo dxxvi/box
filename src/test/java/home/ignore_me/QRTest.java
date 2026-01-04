@@ -6,12 +6,6 @@ import com.google.zxing.NotFoundException;
 import com.google.zxing.Result;
 import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
 import com.google.zxing.common.HybridBinarizer;
-import org.bytedeco.javacv.FFmpegFrameGrabber;
-import org.bytedeco.javacv.FrameGrabber;
-import org.bytedeco.javacv.Java2DFrameConverter;
-import org.junit.jupiter.api.Test;
-
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -20,13 +14,18 @@ import java.nio.file.Path;
 import java.util.Base64;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
+import javax.imageio.ImageIO;
+import org.bytedeco.javacv.FFmpegFrameGrabber;
+import org.bytedeco.javacv.FrameGrabber;
+import org.bytedeco.javacv.Java2DFrameConverter;
+import org.junit.jupiter.api.Test;
 
 class QRTest {
   @Test
   void test() throws FrameGrabber.Exception {
     try (var frameGrabber = new FFmpegFrameGrabber("/dev/shm/video.mp4");
-         var java2DFrameConverter = new Java2DFrameConverter();
-         var executorService = Executors.newFixedThreadPool(9);) {
+        var java2DFrameConverter = new Java2DFrameConverter();
+        var executorService = Executors.newFixedThreadPool(9); ) {
       frameGrabber.start();
 
       final ConcurrentHashMap<String, Boolean> filenames = new ConcurrentHashMap<>();
@@ -60,33 +59,33 @@ class QRTest {
     private final BufferedImage bi;
     private final ConcurrentHashMap<String, Boolean> filenames; // the values are ignored
 
-    public MyTask(BufferedImage bi,
-                  ConcurrentHashMap<String, Boolean> filenames) {
+    public MyTask(BufferedImage bi, ConcurrentHashMap<String, Boolean> filenames) {
       this.bi = bi;
       this.filenames = filenames;
     }
 
     @Override
     public void run() {
-          var binaryBitmap = new BinaryBitmap(new HybridBinarizer(new BufferedImageLuminanceSource(bi)));
-          try {
-            Result result = new MultiFormatReader().decode(binaryBitmap);
-            String qrCodeData = result.getText();
-            String[] parts = qrCodeData.split(":", 2);
-            String fileName = parts[0];
-            if (parts.length > 1 && !filenames.containsKey(fileName)) {
-              byte[] fileContent = Base64.getDecoder().decode(parts[1]);
-              Files.write(Path.of("/dev/shm", fileName), fileContent);
-              filenames.put(fileName, Boolean.TRUE);
-            }
-          } catch (NotFoundException nfe) {
-/*
-            var file = new File("/dev/shm/bad-qr-" + i + ".png");
-            writeBufferedImageToFile(bi, file);
-*/
-          } catch (IOException ioe) {
-            System.err.println("Should not see this");
-          }
+      var binaryBitmap =
+          new BinaryBitmap(new HybridBinarizer(new BufferedImageLuminanceSource(bi)));
+      try {
+        Result result = new MultiFormatReader().decode(binaryBitmap);
+        String qrCodeData = result.getText();
+        String[] parts = qrCodeData.split(":", 2);
+        String fileName = parts[0];
+        if (parts.length > 1 && !filenames.containsKey(fileName)) {
+          byte[] fileContent = Base64.getDecoder().decode(parts[1]);
+          Files.write(Path.of("/dev/shm", fileName), fileContent);
+          filenames.put(fileName, Boolean.TRUE);
         }
+      } catch (NotFoundException nfe) {
+        /*
+                    var file = new File("/dev/shm/bad-qr-" + i + ".png");
+                    writeBufferedImageToFile(bi, file);
+        */
+      } catch (IOException ioe) {
+        System.err.println("Should not see this");
+      }
     }
+  }
 }

@@ -108,7 +108,7 @@ class LearningRustInTest {
 
     // specific for each book
     Pattern textPattern = Pattern.compile("\".*?\"");
-    Pattern derivePattern = Pattern.compile("#\\[derive\\([a-zA-Z ,]+\\)]");
+    Pattern derivePattern = Pattern.compile("(#\\[derive\\([a-zA-Z ,]+\\)])|(#\\[tokio::[a-z]+])|(#\\[test])|(#\\[cfg\\(test\\)])");
     Pattern combinumeralPattern = Pattern.compile("<span class=\"fm-combinumeral\">.</span>");
     Pattern simpleCommentPattern = Pattern.compile("// [a-zA-Z0-9 :;_'`,.?&()-]+$");
     ;
@@ -522,14 +522,16 @@ class LearningRustInTest {
               const id2maxwidth = {
                 '2ff02e1fcf48a13953189cfe9f89761b2cfe0e34': 1900,
                 'fb18c9042fcc140fae97744335c36f626debb13b': 3700,
-                'ce174040d076aac904ca0a22ce6e61cdd55a544b': 2000,
                 '869781e3912e236ae233a0493be88ce77f069227': 32,
                 '92f036afe6192372f8db8921564a3e9e1562472d': 35,
+                '1b81ef19e1078d9b3a54ec37acd438e5edfc93fd': 3300,
                 'bc169885837ee4d7d4ae26651aa362686066ff6c': 19,
                 'c9e1ba645e5ed1068a9d0da62d7e67e682e4001b': 35,
+                '620b8dca49720116bf4ee2b669596f72305b03ec': 4100,
                 'f7dcf95b40662fa58c0b04da8cda579e36b3360b': 65,
                 'f3b446feeffa308b84bab5f73a3a2804387328d3': 37,
                 'b8e53eb2540b27216af0ee2ade13339986bc4ca6': 27,
+                '96fa68287b7123aef3df06088a136b8df0b930e2': 4000,
                 'b74092ee0df3ba07fe0359c2fc212e1989374f34': 19,
                 'fb629634c81476d6165f5c420e89a0df46dfedec': 27,
                 '032aba71d763b89a920ea1c9263e2ebd0303eb1f': 3500,
@@ -538,9 +540,13 @@ class LearningRustInTest {
                 'e7cf768920999de65a95d99018ae7befad2f7969': 34,
                 '10bfb6e5584ad8ff98854f3a6e44a0ee4ddbf556': 28,
                 '4102b0dda9b55694454996b567767d7f61fa1a6e': 30,
+                '619d3882600457a69be4d94af5219c28326443bd': 4000,
                 '8a427ff077df93ecb7b61fb79f033bcac4a38112': 50,
                 'c11ac683ec35b96fcbd14931625a0c97cd4dd9a7': 38,
+                '6c12981f2acd62dd475cf6d1ecb4ea1d0fc08bd3': 1300,
+                '9c26bb843e91ca2800abf9e6729159e16bb77058': 3300,
                 '44915d7a1008253e17da6a55770b695447f68a70': 35,
+                'd2d2e9b17fa54e7b69baec3f838f61a65c3a37ae': 3500,
                 '7901dcb2f597dc79fa332771c529d22b502d68f0': 2300,
                 '153fb4f00a181032656bae756603b45bccd9ae2d': 35,
                 '3de105dc3f903efe95d5204a3c6ad63d2457f33b': 19,
@@ -549,12 +555,15 @@ class LearningRustInTest {
                 '792ea3afde5a5efaf6489d38fe41180ae8b4efe4': 37,
                 '535734bc61c74ab18d5cdb6611290174624bba78': 12,
                 '305655d9da13536f1af74db16b1d59f63ed42e35': 24,
+                '824d20922552bb967b8869722c465f8a28f133c6': 2000,
+                '772c0c42f32710fec9a007edda7dbea5d782a0a4': 1500,
                 'bff0530656372f318a8c6b795024d3b5a6032bb5': 31,
                 'aff31a3d94477a7eb56b558f04a139fb9fec6e40': 28,
                 'bf1ac9508525e173cbc1d91a77679a2d5160931e': 10,
                 '44b32687f7fe45b2c250c260ccfd6d0144684b9e': 19,
                 'e6c0b237860ec54c201e22311e49330fb592be92': 45,
                 'f6052396054299d623db3cc65ad1e3068a9a4676': 31,
+                'a06f3b365579bd029d1084b347f838aa31e453e2': 2200,
                 '2773b2bc7e00a599b13766cde8f405acf2fecae6': 45,
                 '6ed4ce244e4afa45508f8cf045f9b5f9a7ce85c5': 19,
                 'ad4a1e49a7005edd71376c48c2eccb492e879769': 35,
@@ -605,7 +614,7 @@ class LearningRustInTest {
                 '9bded734d14bc1ab6a1e96e1693b6253a50bbb1f': 47,
                 'c36370eb227d13626ea2c68e3bdebf37ad33d230': 44,
                 '91ffbb9c386d146a4de73dbb1f8fc9c0380fa8a0': 55,
-                'b08e401345915bd3f76315d62187fff5e4f65d69': 27,
+                'b08e401345915bd3f76315d62187fff5e4f65d69': 1400,
                 'f0f6585193dd39f8e1e66e54b5a03dbd84ad0dc4': 44,
                 '9b6734c689ec729258fc6705af1fcd4bdab9b903': 19,
                 'dff0c2e517c64bed3efef3a89a193e601ec6d9e4': 19,
@@ -668,6 +677,7 @@ class LearningRustInTest {
                 '98380fde695983d4f28f114de6d06b19e7ae1708': 44,
                 'aebd8c163a2994b2ade201258ad18f72c306a5c0': 34,
                 '6458575e5d3c824cb2f55c1672f7574c81a3ae57': 62,
+                '87c5428856a055e5f59377894b2c152d7028651e': 2700,
                 '20362de77e74e5df1de967265ce6c1b175ab35db': 55,
                 '41c1c99882177c119f50efd8124d189250d2a41a': 35,
                 'e69dd6c2c4ddb4b86b477210bfe6644e65efba2c': 35,
@@ -676,6 +686,7 @@ class LearningRustInTest {
                 '99356698fbf39c5a4440a54591df0772dee7fd27': 24,
                 '74d811263c95d3db43480acd68354aa5ddacbf84': 50,
                 'd63bd585957fc80a65fed969113d67227d06f525': 44,
+                '4a1c5573831c4a37264bfb391051be9f39969b7a': 5000,
                 '97e6112a0744b18cb41294f7eccc34a705587caa': 55,
                 '9b6ddb04cb378fc7056dfffb32b48150847d2de2': 44,
                 'e3329bde6387474dd970c8aa7ae28566a74cb170': 55,
@@ -782,8 +793,8 @@ class LearningRustInTest {
                 '7bc497fca1bfbec370e777095609d72b6d65552b': 48,
                 '2fb0e18ac9eb8d37da57345079a944aa23c5f937': 18,
                 '3a8b95307c9fb88f65fbe81c91983255d73c0de4': 45,
-                '58eb0a1988247440feb74958d2c76377a0a512bc': 29,
                 'aa75d8b1a4dee3f5b5bba0bfd5f81a7716c49c6f': 22,
+                '9ebffe240ff736be97adc49140fdfc879a6ddb90': 3000,
                 '5bbf9811db221149aeaf3e025d5f5daf71057c64': 45,
                 '50b63427c675af9bf10766d11fd8654c02e8ee8d': 47,
                 'fca2ff182df45bc0b9b546344d7cbbcc9e7fcb69': 47,
@@ -799,7 +810,7 @@ class LearningRustInTest {
                 '5be778c9201ae656a2dac1812a7a9465ac66f938': 23,
                 '207e64aa2b6183a1403063b5b35ddb47260da172': 21,
                 'cec696a049a54611532e7ca934b4210aebada7d1': 37,
-                '8f65298b0d01d57ddcd00869fc6d402f2d7bace3': 21,
+                '8f65298b0d01d57ddcd00869fc6d402f2d7bace3': 2200 ,
                 '05b80a98289f754c5658e46b4c28d798beacee89': 48,
                 'e246fed64ec1c5f8fa702e2ac6d76bf6c6ea970e': 52,
                 '1a8d6e282c80298b4716ff852eb558f0ffe63daf': 59,
@@ -817,7 +828,7 @@ class LearningRustInTest {
                 '2bcb1e480bf84cb7656c7739bed13cb4a2483f15': 26,
                 '22812d221d81e2d6f17c903a87ada9261724072e': 37,
                 '5e03521c393ce6285156ee656f430c784023953c': 2700,
-                'e53b3c386b1083e0e3c6754d1f507bf0874a17e8': 4100
+                'e53b3c386b1083e0e3c6754d1f507bf0874a17e8': 3700
               };
               document.querySelectorAll('div.flex > p:first-child').forEach(p => {
                 const id = sha1(p.innerHTML);
@@ -938,9 +949,9 @@ class LearningRustInTest {
                 if (nextP == null
                     || !nextP.hasClass("fm-code-annotation")
                     || (!nextP.nameIs("p")
-                        && !nextP.nameIs("div")
-                        && !nextP.nameIs("ul")
-                        && !nextP.nameIs("ol"))) {
+                    && !nextP.nameIs("div")
+                    && !nextP.nameIs("ul")
+                    && !nextP.nameIs("ol"))) {
                   fmCodeAnnotation = null;
                 } else {
                   fmCodeAnnotation = nextP;

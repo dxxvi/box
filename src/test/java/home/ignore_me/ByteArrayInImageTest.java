@@ -93,6 +93,14 @@ class ByteArrayInImageTest {
     return new AbstractMap.SimpleImmutableEntry<>(x, arr);
   }
 
+  @Test
+  void testReadColor() throws Exception {
+    var bufferedImage = ImageIO.read(new File("/dev/shm/test.png"));
+    int pixel = bufferedImage.getRGB(10, 10);
+    var color = new Color(pixel, true);
+    System.out.println(color);
+  }
+
   // new DecimalFormat("#,###.##")
   @Test
   void test2() {

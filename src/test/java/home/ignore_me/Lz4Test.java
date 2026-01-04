@@ -83,8 +83,9 @@ class Lz4Test {
     final Cipher aesDecryptor = Cipher.getInstance(Utils.ALGORITHM);
     aesDecryptor.init(Cipher.DECRYPT_MODE, Utils.getAESSecretKey());
 
-    try (Stream<Path> stream = Files.walk(Path.of("src/test/resources"))
-    /*.filter(p -> p.toFile().getName().contains("learning-rust"))*/ ) {
+    try (Stream<Path> stream =
+        Files.walk(Path.of("src/test/resources"))
+            .filter(p -> p.toFile().getName().contains("learning-rust"))) {
       for (Path path : stream.filter(p -> p.toFile().getPath().endsWith(".txt.bin")).toList()) {
         byte[] encryptedBytes = Files.readAllBytes(path);
         byte[] compressedBytes = aesDecryptor.doFinal(encryptedBytes);
