@@ -6,6 +6,8 @@ import home.Tuple2;
 import home.Utils;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -27,6 +29,7 @@ class LearningRustInTest {
       }
       .smaller-font-size { font-size: 82% }
       a { text-decoration: none }
+      li > p { margin: 0 }
       h1, h2, h3 { font-family: 'Noto Sans JP' }
       h1 { font-size: 1.67rem; font-weight: 300; color: #666; margin-top: 9rem }
       h2 { font-size: 1.32rem; font-weight: 400; color: #26f }
@@ -35,6 +38,13 @@ class LearningRustInTest {
       body .token.comment { font-style: italic }
       body :not(pre)>code[class*=language-], body pre[class*=language-] {
         background: linear-gradient(90deg, #f5f2f0, #fcf9f7, #f5f2f0) }
+      pre.programlisting:not(.language-rust) {
+        margin-block: 0; padding: .5em 1em; background: linear-gradient(90deg, #f7f7f7, #fafafa, #f7f7f7) }
+      div.multi-column { display: flex }
+      div.multi-column > div.orm-ChapterReader-codeSnippetContainer { margin-left: 1rem; margin-right: 1rem }
+      div.multi-column > div.orm-ChapterReader-codeSnippetContainer:last-child { margin-right: 0 }
+      p.fm-callout { margin-left: 2rem }
+      .fm-callout-head { font: 700 1em "Noto Sans JP", sans-serif; color: #12de1e }
       div#toc { position: fixed; top: 0; right: 3rem; background-color: rgba(255, 255, 255, .9);
         max-height: 82vh; overflow: auto; z-index: 9; padding: 1rem; padding-top: .1rem;
         padding-bottom: .5rem; border: 1px solid #ccc; border-top: 0
@@ -97,6 +107,47 @@ class LearningRustInTest {
                 }
               }
             </script>""");
+
+    // align the chapter summary head
+    for (Element ul : document.select("p.co-summary-head + ul")) {
+      Element p = ul.previousElementSibling();
+      Element div = document.createElement("div").attr("style", "display: flex");
+      p.before(div);
+      div.appendChildren(List.of(p, ul));
+    }
+
+    // arrange p (with content ending with `:`), code and code annotations (we don't have the pre el
+    // here but the i)
+    for (Element iel : document.select("p + div.orm-ChapterReader-codeSnippetContainer > i[id]")) {
+      Element div = iel.parent();
+      Element p = div.previousElementSibling();
+      if (!p.text().endsWith(":") && !p.hasClass("pseudo-semicolon")) continue;
+
+      List<Element> codeAnnotationEls = new ArrayList<>();
+      Element e = div;
+      while (true) {
+        Element needToCheckEl = e.nextElementSibling();
+        if (needToCheckEl != null && needToCheckEl.hasClass("fm-code-annotation")) {
+          codeAnnotationEls.add(needToCheckEl);
+          e = needToCheckEl;
+          continue;
+        }
+        break;
+      }
+
+      Element codeAnnotationDiv = document.createElement("div").appendChildren(codeAnnotationEls);
+
+      Element flexDiv = document.createElement("div").addClass("multi-column");
+      p.before(flexDiv);
+      flexDiv.appendChildren(List.of(p, div, codeAnnotationDiv));
+    }
+
+    for (Element p : document.select("p.combine-next")) {
+      Element nextEl = p.nextElementSibling();
+      Element div = document.createElement("div").addClass("multi-column");
+      p.before(div);
+      div.appendChildren(List.of(p, nextEl));
+    }
 
     // build the TOC
     Element tocDiv = document.createElement("div").attr("id", "toc");
