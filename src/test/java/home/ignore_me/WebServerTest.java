@@ -1,20 +1,19 @@
 package home.ignore_me;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
+
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
-import org.junit.jupiter.api.Test;
-
-import javax.imageio.ImageIO;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.util.Base64;
 import java.util.Map;
 import java.util.Random;
@@ -22,16 +21,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.nio.file.StandardOpenOption.CREATE;
-import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
+import javax.imageio.ImageIO;
+import org.junit.jupiter.api.Test;
 
 class WebServerTest {
   @Test
   void testToBinary() throws Exception {
     byte[] bytes = Base64.getUrlDecoder().decode(Files.readAllBytes(Path.of("/dev/shm/file.txt")));
-    Files.write(Path.of("/dev/shm/src.7z"), bytes, CREATE, TRUNCATE_EXISTING);
+    Files.write(Path.of("/dev/shm/file.7z"), bytes, CREATE, TRUNCATE_EXISTING);
   }
 
   @Test
@@ -39,7 +36,8 @@ class WebServerTest {
     final AtomicInteger total = new AtomicInteger(-1);
     final Map<Integer, String> map = new ConcurrentHashMap<>();
 
-    HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
+    int port = 8080;
+    HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
 
     server.createContext("/", new RootHandler());
     server.createContext("/img.png", new ImageHandler(total, map));
@@ -47,8 +45,8 @@ class WebServerTest {
     server.createContext("/dump", new DumpHandler(total, map));
 
     server.start();
-    System.out.println("Server started on port 8080");
-    System.out.println("Visit http://localhost:8080 and http://localhost:8080/img.png");
+    System.out.println("Server started on port " + port);
+    System.out.printf("Visit http://localhost:%d and http://localhost:%d/img.png\n", port, port);
     Thread.sleep(999_999_999);
   }
 }
@@ -70,7 +68,8 @@ class RootHandler implements HttpHandler {
   }
 
   private static byte[] getBytes(String cookieValue) {
-    String htmlResponse = """
+    String htmlResponse =
+        """
           <!DOCTYPE html>
           <html lang="en">
           <head>
@@ -85,9 +84,9 @@ class RootHandler implements HttpHandler {
                       .split('\\n')
                       .map(line => line.trimEnd())  // remove trailing \\r if present on Windows
                       .filter(line => line !== ''); // remove empty lines
-        
+
                     const total = lines.length;
-        
+
                     for (let i = 0; i < total; i++) {
                       const currentLineNumber = i + 1;
                       const currentContent = lines[0];
@@ -134,12 +133,15 @@ class MapHandler implements HttpHandler {
   public void handle(HttpExchange exchange) throws IOException {
     exchange.getResponseHeaders().set("Content-Type", "application/json");
     StringBuilder sb = new StringBuilder();
-    sb.append("""
-        {"total": %d,""".formatted(total.get()));
-    String str = IntStream.rangeClosed(1, total.get())
-        .filter(i -> !map.containsKey(i))
-        .mapToObj(Integer::toString)
-        .collect(Collectors.joining(",", "\"missing\":[", "]}"));
+    sb.append(
+        """
+        {"total": %d,"""
+            .formatted(total.get()));
+    String str =
+        IntStream.rangeClosed(1, total.get())
+            .filter(i -> !map.containsKey(i))
+            .mapToObj(Integer::toString)
+            .collect(Collectors.joining(",", "\"missing\":[", "]}"));
     sb.append(str);
     byte[] responseBytes = sb.toString().getBytes(UTF_8);
     exchange.sendResponseHeaders(200, responseBytes.length);
@@ -164,9 +166,9 @@ class DumpHandler implements HttpHandler {
     try (OutputStream os = Files.newOutputStream(Path.of("dump.txt"), CREATE, TRUNCATE_EXISTING)) {
       for (Map.Entry<Integer, String> entry : map.entrySet()) {
         os.write(entry.getKey().toString().getBytes(UTF_8));
-        os.write(new byte[] { '~' });
+        os.write(new byte[] {'~'});
         os.write(entry.getValue().getBytes(UTF_8));
-        os.write(new byte[] { '\n' });
+        os.write(new byte[] {'\n'});
       }
     }
 
@@ -195,6 +197,9 @@ class ImageHandler implements HttpHandler {
   public void handle(HttpExchange exchange) throws IOException {
     String cookiesValue = exchange.getRequestHeaders().getFirst("Cookie").substring(2);
     String[] array = cookiesValue.split(":");
+    if (array.length < 2) {
+      System.err.println("Cookie value is invalid");
+    }
     String data = array[1];
     array = array[0].split("~");
     int currentId = Integer.parseInt(array[0]);
@@ -202,7 +207,8 @@ class ImageHandler implements HttpHandler {
 
     if (total.get() == -1) {
       total.set(currentTotal);
-      System.out.println("This is the 1st item of " + total);;
+      System.out.println("This is the 1st item of " + total);
+      ;
     } else if (currentTotal != total.get()) {
       System.err.println("Stop now! There's a bug.");
       return;
@@ -212,7 +218,8 @@ class ImageHandler implements HttpHandler {
     System.out.printf("Received item %d of %d%n", currentId, total.get());
 
     if (hasAllData()) {
-      try (OutputStream os = Files.newOutputStream(Path.of("file.txt"), CREATE, TRUNCATE_EXISTING)) {
+      try (OutputStream os =
+          Files.newOutputStream(Path.of("file.txt"), CREATE, TRUNCATE_EXISTING)) {
         for (int i = 1; i <= total.get(); i++) {
           os.write(map.get(i).getBytes(UTF_8));
         }

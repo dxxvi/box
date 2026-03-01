@@ -8,29 +8,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.junit.jupiter.api.Test;
 
-class LearningRustInTest {
-  private static final String FILENAME =
-      Utils.decodeThenDecryptThenDecode(
-          "iVAjZOE2mLRT5AxOqLzbKl4tbMH0PYEIXapClpWiPMLCCMvfdC33DeN68tloPe0G4_Iep4wyigwqc5MKFeFMNA");
-  private static final Path PATH_TXT = Path.of("src/test/resources", FILENAME);
-  private static final Path PATH_HTML =
-      Path.of("src/test/resources", FILENAME.replace(".txt", ".html"));
+class Kafka4ArchitectsTest {
+  private static final Path PATH_TXT = Path.of("src/test/resources/kafka-4-architects.txt");
+  private static final Path PATH_HTML = Path.of("src/test/resources/kafka-4-architects.html");
   private static final String CSS =
       """
-      :root {
-        --pre-background: #f1f6fa;
-      }
-      .smaller-font-size { font-size: 82% }
       a { text-decoration: none }
-      h1, h2, h3 { font-family: 'Noto Sans JP' }
-      h1 { font-size: 1.67rem; font-weight: 300; color: #666 }
-      h2 { font-size: 1.32rem; font-weight: 400; color: #26f }
-      h3 { font-size: 1.15rem; font-weight: 400; color: #f26 }
+      div.ProgramCode { font-family: "Fira Code", "Chiron Sung HK", monospace }
       div#toc { position: fixed; top: 0; right: 3rem; background-color: rgba(255, 255, 255, .9);
         max-height: 82vh; overflow: auto; z-index: 9; padding: 1rem; padding-top: .1rem;
         padding-bottom: .5rem; border: 1px solid #ccc; border-top: 0
@@ -42,8 +30,7 @@ class LearningRustInTest {
       div#toc a.toc-1 { padding-top: 1rem }
       div#toc a.toc-2 { padding-left: 1rem }
       div#toc a.toc-3 { padding-left: 2rem }
-      div#toc a.toc-4 { padding-left: 3rem }
-      span.fm-combinumeral { font-family: "Chiron Sung HK",serif; font-weight: bold }""";
+      div#toc a.toc-4 { padding-left: 3rem }""";
 
   @Test
   void test() throws Throwable {
@@ -51,41 +38,14 @@ class LearningRustInTest {
         Utils.extractPres(Files.readString(PATH_TXT, UTF_8));
     var document = Jsoup.parse(tuple._1());
 
-    Utils.addStuff(
-        document,
-        Utils.decodeThenDecryptThenDecode(
-            "I-UppN2YhY3PJna2uTeDPKnBqOpm4Fe7QbH7dtQq25u4V9jRMRRbG03oA-OmlHXqHEvZb5E5cIsdTeP1lZpqJQ"),
-        CSS);
-
-    // remove the <span class="fm-combinumeral"> and </span> in the values in tuple._2
-    Map<Integer, String> map =
-        tuple._2().entrySet().stream()
-            .peek(
-                e -> {
-                  if (!e.getValue().startsWith("<pre>"))
-                    System.out.println("Check this pre: " + e.getValue());
-                })
-            .collect(
-                Collectors.toMap(
-                    Map.Entry::getKey,
-                    entry ->
-                        entry
-                            .getValue()
-                            .replace("<span class=\"fm-combinumeral\">", "")
-                            .replace("</span>", "")));
-    tuple._2().putAll(map);
+    Utils.addStuff(document, "Kafka for Architects", CSS);
 
     document
         .head()
         .append(
             """
-            <script>document.head.parentElement.style.fontSize = '18px';</script>
-            <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/themes/prism.min.css" rel="stylesheet" />
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/prism.min.js"></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/components/prism-rust.min.js"></script>
-            <link href="https://fonts.googleapis.com/css2?family=Chiron+Sung+HK:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">""")
-        .append(
-            """
+            <script>document.documentElement.style.fontSize = '18px';</script>
+            <link href="https://fonts.googleapis.com/css2?family=Chiron+Sung+HK:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
             <script>
               function hideTOC(event) {
                 if (event.target === event.currentTarget) {
@@ -94,7 +54,24 @@ class LearningRustInTest {
               }
             </script>""");
 
-    // build the TOC
+    // div:has(> p ending with :) + ul: if all li's are not very long, align the p and ul
+    final int MAX_LI_LENGTH = 130;
+    for (Element ul : document.select("div + ul")) {
+      Element div = ul.previousElementSibling();
+      if (div.childrenSize() == 1
+          && div.child(0).tagName().equalsIgnoreCase("p")
+          && div.child(0).text().endsWith(":")) {
+        if (ul.children().stream().allMatch(li -> li.text().length() < MAX_LI_LENGTH)) {
+          int pWidth =
+              (int) ((double) div.child(0).text().length() / (double) ul.childrenSize() * 1.2);
+          div.child(0).attr("style", "max-width:" + pWidth + "ch");
+          div.appendChild(ul);
+          div.addClass("display-flex").addClass("p").addClass("ul");
+        }
+      }
+    }
+
+    // make TOC
     Element tocDiv = document.createElement("div").attr("id", "toc");
     tocDiv.append(
         """
@@ -107,7 +84,7 @@ class LearningRustInTest {
             .attr("onclick", "hideTOC(event)");
     AtomicInteger ai = new AtomicInteger();
     document
-        .select("h1, h2, h3")
+        .select("div > h1, div > h2, div > h3:not(.introduction-header)")
         .forEach(
             h -> {
               String id = "_id" + ai.incrementAndGet();
