@@ -28,9 +28,13 @@ class LearningRustInTest {
       .smaller-font-size { font-size: 82% }
       a { text-decoration: none }
       h1, h2, h3 { font-family: 'Noto Sans JP' }
-      h1 { font-size: 1.67rem; font-weight: 300; color: #666 }
+      h1 { font-size: 1.67rem; font-weight: 300; color: #666; margin-top: 9rem }
       h2 { font-size: 1.32rem; font-weight: 400; color: #26f }
       h3 { font-size: 1.15rem; font-weight: 400; color: #f26 }
+      body code[class*=language-], body pre[class*=language-] { font-family: 'Fira Code', monospace; font-size: .9em }
+      body .token.comment { font-style: italic }
+      body :not(pre)>code[class*=language-], body pre[class*=language-] {
+        background: linear-gradient(90deg, #f5f2f0, #fcf9f7, #f5f2f0) }
       div#toc { position: fixed; top: 0; right: 3rem; background-color: rgba(255, 255, 255, .9);
         max-height: 82vh; overflow: auto; z-index: 9; padding: 1rem; padding-top: .1rem;
         padding-bottom: .5rem; border: 1px solid #ccc; border-top: 0
@@ -79,7 +83,7 @@ class LearningRustInTest {
         .head()
         .append(
             """
-            <script>document.head.parentElement.style.fontSize = '18px';</script>
+            <script>document.documentElement.style.fontSize = '18px';</script>
             <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/themes/prism.min.css" rel="stylesheet" />
             <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/prism.min.js"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/components/prism-rust.min.js"></script>
@@ -125,6 +129,15 @@ class LearningRustInTest {
             });
     tocDiv.appendChild(innerTocDiv);
     document.body().appendChild(tocDiv);
+
+    // format Rust code with Prism
+    document
+        .body()
+        .append(
+            """
+            <script>
+              document.querySelectorAll('.language-rust').forEach(el => Prism.highlightElement(el));
+            </script>""");
 
     // insert the pre back and write to file
     Utils.insertPreBackThenWriteToFile(document, tuple._2(), PATH_HTML);
