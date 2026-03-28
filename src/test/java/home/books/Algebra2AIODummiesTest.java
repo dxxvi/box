@@ -24,6 +24,7 @@ class Algebra2AIODummiesTest {
       h1.Chap-Title { font-weight: 300; color: #888 }
       h1 { font: 300 1.69rem "Noto Sans JP", sans-serif; color: #777; margin-top: 2rem }
       p.Intro-Head, p.Intro-Text { margin: 0 }
+      p.Intro-Text b { font-weight: 200 }
       h2 { font: 400 1.44rem "Noto Sans JP", sans-serif; color: #ff7452 }
       h3 { font: 500 1.2rem "Noto Sans JP", sans-serif; color: #14ab75 }
       h4 { font: 700 1rem "Noto Sans JP", sans-serif; color: #9225e9 }

@@ -34,17 +34,20 @@ class LearningRustInTest {
       h1 { font-size: 1.67rem; font-weight: 300; color: #666; margin-top: 9rem }
       h2 { font-size: 1.32rem; font-weight: 400; color: #26f }
       h3 { font-size: 1.15rem; font-weight: 400; color: #f26 }
+      p.fm-head2 { font-weight: 600; color: #930ee7 }
       body code[class*=language-], body pre[class*=language-] { font-family: 'Fira Code', monospace; font-size: .9em }
       body .token.comment { font-style: italic }
       body :not(pre)>code[class*=language-], body pre[class*=language-] {
-        background: linear-gradient(90deg, #f5f2f0, #fcf9f7, #f5f2f0) }
+        background: linear-gradient(90deg, #f5f2f0, #fdfefd, #f5f2f0) }
       pre.programlisting:not(.language-rust) {
         margin-block: 0; padding: .5em 1em; background: linear-gradient(90deg, #f7f7f7, #fafafa, #f7f7f7) }
-      div.multi-column { display: flex }
+      div.multi-column { display: flex } div.multi-column > p:first-child { margin-top: .25rem }
       div.multi-column > div.orm-ChapterReader-codeSnippetContainer { margin-left: 1rem; margin-right: 1rem }
       div.multi-column > div.orm-ChapterReader-codeSnippetContainer:last-child { margin-right: 0 }
       p.fm-callout { margin-left: 2rem }
-      .fm-callout-head { font: 700 1em "Noto Sans JP", sans-serif; color: #12de1e }
+      .fm-callout-head {
+        font: 700 1em "Noto Sans JP", sans-serif; color: #0cc217; display: inline-block; margin-right: 1rem }
+      p.fm-callout { background: linear-gradient(90deg, #fff, #fff, #12de1e) bottom / 100% 9% no-repeat }
       div#toc { position: fixed; top: 0; right: 3rem; background-color: rgba(255, 255, 255, .9);
         max-height: 82vh; overflow: auto; z-index: 9; padding: 1rem; padding-top: .1rem;
         padding-bottom: .5rem; border: 1px solid #ccc; border-top: 0
@@ -74,11 +77,6 @@ class LearningRustInTest {
     // remove the <span class="fm-combinumeral"> and </span> in the values in tuple._2
     Map<Integer, String> map =
         tuple._2().entrySet().stream()
-            .peek(
-                e -> {
-                  if (!e.getValue().startsWith("<pre>"))
-                    System.out.println("Check this pre: " + e.getValue());
-                })
             .collect(
                 Collectors.toMap(
                     Map.Entry::getKey,
@@ -93,7 +91,7 @@ class LearningRustInTest {
         .head()
         .append(
             """
-            <script>document.documentElement.style.fontSize = '18px';</script>
+            <script>document.documentElement.style.fontSize = '20px';</script>
             <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/themes/prism.min.css" rel="stylesheet" />
             <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/prism.min.js"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/components/prism-rust.min.js"></script>
