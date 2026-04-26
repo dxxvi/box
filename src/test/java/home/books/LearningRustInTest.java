@@ -41,7 +41,8 @@ class LearningRustInTest {
         background: linear-gradient(90deg, #f5f2f0, #fdfefd, #f5f2f0) }
       pre.programlisting:not(.language-rust) {
         margin-block: 0; padding: .5em 1em; background: linear-gradient(90deg, #f7f7f7, #fafafa, #f7f7f7) }
-      div.multi-column { display: flex } div.multi-column > p:first-child { margin-top: .25rem }
+      div.multi-column { display: flex }
+      div.multi-column > p:first-child, p.combine-next + * { margin-top: .25rem }
       div.multi-column > div.orm-ChapterReader-codeSnippetContainer { margin-left: 1rem; margin-right: 1rem }
       div.multi-column > div.orm-ChapterReader-codeSnippetContainer:last-child { margin-right: 0 }
       p.fm-callout { margin-left: 2rem }
@@ -114,8 +115,6 @@ class LearningRustInTest {
       div.appendChildren(List.of(p, ul));
     }
 
-    // arrange p (with content ending with `:`), code and code annotations (we don't have the pre el
-    // here but the i)
     for (Element iel : document.select("p + div.orm-ChapterReader-codeSnippetContainer > i[id]")) {
       Element div = iel.parent();
       Element p = div.previousElementSibling();
