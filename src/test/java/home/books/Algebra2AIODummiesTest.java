@@ -7,7 +7,10 @@ import home.Utils;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
 import org.junit.jupiter.api.Test;
 
 class Algebra2AIODummiesTest {
@@ -33,7 +36,19 @@ class Algebra2AIODummiesTest {
       p.Normal-w-icon:has(> img:first-child) + *,
       p.Exam-Questiont:has(> img:first-child) + *,
       p.Exam-Question:has(> img:first-child) + * { clear: both }
-      """;
+      aside > div.sidebar { margin-left: 3rem; border-left: .2rem solid #ccc; padding-left: 1rem }
+      div#toc { position: fixed; top: 0; right: 3rem; background-color: rgba(255, 255, 255, .9);
+        max-height: 82vh; overflow: auto; z-index: 9; padding: 1rem; padding-top: .1rem;
+        padding-bottom: .5rem; border: 1px solid #ccc; border-top: 0
+      }
+      #toc-chkbox + div { display: none }
+      #toc-chkbox:checked + div { display: flex }
+      div#toc a { display: block; line-height: 1.45; color: #333 }
+      div#toc a:hover { color: #26f }
+      div#toc a.toc-1 { padding-top: 1rem }
+      div#toc a.toc-2 { padding-left: 1rem }
+      div#toc a.toc-3 { padding-left: 2rem }
+      div#toc a.toc-4 { padding-left: 3rem }""";
 
   @Test
   void test() throws Throwable {
@@ -53,7 +68,51 @@ class Algebra2AIODummiesTest {
                   document.getElementById('toc-chkbox').checked = false;
                 }
               }
+            </script>""")
+        .append(
+            """
+            <script>
+              function hideTOC(event) {
+                if (event.target === event.currentTarget) {
+                  document.getElementById('toc-chkbox').checked = false;
+                }
+              }
             </script>""");
+
+    // build the TOC
+    Element tocDiv = document.createElement("div").attr("id", "toc");
+    tocDiv.append(
+        """
+        <label for="toc-chkbox" style="cursor: pointer">Table of Contents</label>
+        <input type="checkbox" id="toc-chkbox" style="visibility: hidden">""");
+    Element innerTocDiv =
+        document
+            .createElement("div")
+            .attr("style", "flex-direction: column; align-items: flex-start")
+            .attr("onclick", "hideTOC(event)");
+    AtomicInteger ai = new AtomicInteger();
+    AtomicInteger chapterNumber = new AtomicInteger(0);
+    document
+        .select("h1:not(aside *), h2:not(aside *), h3:not(aside *)")
+        .forEach(
+            h -> {
+              String tocText = h.text();
+              String id = "_id" + ai.incrementAndGet();
+              h.attr("id", id);
+              String cssClass = "toc-3";
+              if (h.nameIs("h1")) {
+                cssClass = "toc-1";
+                tocText = "Chapter " + chapterNumber.incrementAndGet() + ". " + tocText;
+              } else if (h.nameIs("h2")) {
+                cssClass = "toc-2";
+              }
+              innerTocDiv.append(
+                  """
+                  <a href="#%s" class="%s">%s</a>"""
+                      .formatted(id, cssClass, tocText));
+            });
+    tocDiv.appendChild(innerTocDiv);
+    document.body().appendChild(tocDiv);
 
     Files.writeString(PATH_HTML, "<!DOCTYPE html>" + document, CREATE, TRUNCATE_EXISTING);
   }

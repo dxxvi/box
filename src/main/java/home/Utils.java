@@ -25,9 +25,7 @@ public abstract class Utils {
 
   private Utils() {}
 
-  /**
-   * Replace all `&lt;pre[ &gt;].+&lt;/pre&gt;` with `&lt;i id=""&gt;&lt;/i&gt;`
-   */
+  /// Replace all `&lt;pre[ &gt;].+&lt;/pre&gt;` with `&lt;i id=""&gt;&lt;/i&gt;`
   public static Tuple2<String, Map<Integer /*id*/, String /*html*/>> extractPres(String html) {
     final String PRE1 = "<pre ";
     final String PRE2 = "<pre>";
@@ -68,35 +66,33 @@ public abstract class Utils {
         .head()
         .append(
             """
-                <link rel="preconnect" href="https://fonts.googleapis.com">
-                <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-                <link href="https://fonts.googleapis.com/css2?family=Chiron+Sung+HK:ital,wght@0,200..900;1,200..900&family=Fira+Code:wght@300..700&family=Noto+Sans+JP:wght@100..900&display=swap"
-                      rel="stylesheet">""")
+            <link rel="preconnect" href="https://fonts.googleapis.com">
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+            <link href="https://fonts.googleapis.com/css2?family=Chiron+Sung+HK:ital,wght@0,200..900;1,200..900&family=Fira+Code:wght@300..700&family=Noto+Sans+JP:wght@100..900&display=swap"
+                  rel="stylesheet">""")
         .append(
             """
-        <style>
-          // font-weight: Use a value from 200 to 900
-          .noto-serif {
-            font-family: "Chiron Sung HK", serif;
-            font-optical-sizing: auto;
-            font-style: normal;
-            font-variation-settings: "wdth" 100;
-          }
-          // font-weight: Use a value from 100 to 900
-          .noto-sans {
-            font-family: "Noto Sans JP", sans-serif;
-            font-optical-sizing: auto;
-            font-style: normal;
-            font-variation-settings: "wdth" 100;
-          }
-          // font-weight: Use a value from 300 to 700
-          .fira-code {
-            font-family: "Fira Code", monospace;
-            font-optical-sizing: auto;
-            font-style: normal;
-          }
-          pre, code { font-family: "Fira Code", "Chiron Sung HK", monospace; font-size: .91rem }
-        </style>""");
+            <style>
+              .noto-serif {
+                font-family: "Chiron Sung HK", serif;
+                font-optical-sizing: auto;
+                font-style: normal;
+                font-variation-settings: "wdth" 100;
+              }
+              .noto-sans {
+                font-family: "Noto Sans JP", sans-serif;
+                font-optical-sizing: auto;
+                font-style: normal;
+                font-variation-settings: "wdth" 100;
+              }
+              // font-weight: Use a value from 300 to 700
+              .fira-code {
+                font-family: "Fira Code", monospace;
+                font-optical-sizing: auto;
+                font-style: normal;
+              }
+              pre, code { font-family: "Fira Code", "Chiron Sung HK", monospace; font-size: .91rem }
+            </style>""");
   }
 
   public static void addStuff(Document document, String title, String css) {
@@ -140,6 +136,7 @@ public abstract class Utils {
         .forEach(
             img -> {
               img.removeAttr("width").removeAttr("height");
+              img.attr("loading", "lazy");
               String src = img.attr("src");
               if (src.startsWith("/") || !src.startsWith("http")) {
                 img.attr("src", baseUrl + src);

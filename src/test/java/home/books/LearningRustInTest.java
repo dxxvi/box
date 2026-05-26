@@ -61,7 +61,10 @@ class LearningRustInTest {
       div#toc a.toc-2 { padding-left: 1rem }
       div#toc a.toc-3 { padding-left: 2rem }
       div#toc a.toc-4 { padding-left: 3rem }
-      span.fm-combinumeral { font-family: "Chiron Sung HK",serif; font-weight: bold }""";
+      span.fm-combinumeral { font-family: "Chiron Sung HK",serif; font-weight: bold }
+      @media print {
+        body { margin-left: 0; margin-right: 0 }
+      }""";
 
   @Test
   void test() throws Throwable {

@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>home</groupId>
@@ -7,7 +7,7 @@
   <properties>
     <commons-codec.version>1.17.0</commons-codec.version>
     <java.version>25</java.version>
-    <jsoup.version>1.21.1</jsoup.version>
+    <jsoup.version>1.22.2</jsoup.version>
     <junit.version>5.14.0</junit.version>
     <logback.version>1.5.32</logback.version>
     <lz4.version>1.8.0</lz4.version>
@@ -26,9 +26,19 @@
       <version>${logback.version}</version>
     </dependency>
     <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>2.21.3</version>
+    </dependency>
+    <dependency>
       <groupId>com.google.zxing</groupId>
       <artifactId>javase</artifactId>
       <version>3.5.3</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.kafka</groupId>
+      <artifactId>kafka-clients</artifactId>
+      <version>4.0.2</version>
     </dependency>
     <dependency>
       <groupId>org.bytedeco</groupId>
@@ -55,11 +65,11 @@
         <version>3.4.0</version>
         <configuration>
           <java>
-            <removeUnusedImports />
+            <removeUnusedImports/>
             <googleJavaFormat>
               <formatJavadoc>false</formatJavadoc>
             </googleJavaFormat>
-            <importOrder />
+            <importOrder/>
           </java>
           <pom>
             <sortPom>
